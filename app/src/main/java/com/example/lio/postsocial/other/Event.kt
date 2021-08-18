@@ -13,7 +13,7 @@ class Event<out T>(private val content: T) {
             content
         } else null
     }
-gra
+
     fun peekContent() = content
 }
 
@@ -25,7 +25,7 @@ class EventObserver<T>(
     override fun onChanged(t: Event<Resource<T>>?) {
         when (val content = t?.peekContent()) {
             is Resource.Success -> {
-                content.data?.let (onSuccess)
+                content.data?.let(onSuccess)
             }
             is Resource.Error -> {
                 t.getContentIfNotHandled()?.let {
