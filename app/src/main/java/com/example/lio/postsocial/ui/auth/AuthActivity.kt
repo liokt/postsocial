@@ -1,7 +1,8 @@
-package com.example.lio.postsocial
+package com.example.lio.postsocial.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.lio.postsocial.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
