@@ -7,6 +7,7 @@ import com.example.lio.postsocial.other.Resource
 import com.example.lio.postsocial.other.safeCall
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.scopes.ActivityScoped
@@ -40,6 +41,25 @@ class DefaultMainRepository: MainRepository {
             )
             posts.document(postId).set(post).await()
             Resource.Success(Any())
+        }
+    }
+
+    override suspend fun getPostsForFollows() = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = FirebaseAuth.getInstance().uid!!
+            val follows = getUser(uid).data!!.follows
+            val allPosts = posts.whereIn("authorUid", follows)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Post::class.java)
+                .onEach { post ->
+                    val user = getUser(post.authorUid).data!!
+                    post.authorProfilePictureUrl = user.profilePictureUrl
+                    post.authorUserName = user.username
+                    post.isLiked = uid in post.likedBy
+                }
+            Resource.Success(allPosts)
         }
     }
 
