@@ -28,6 +28,8 @@ object AppModule {
     @Provides
     fun provideMainDispatcher() = Dispatchers.Main as CoroutineDispatcher
 
+    @Singleton
+    @Provides
     fun provideGlideInstance(
         @ApplicationContext context: Context
     ) = Glide.with(context).setDefaultRequestOptions(
