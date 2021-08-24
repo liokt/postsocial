@@ -72,6 +72,23 @@ class DefaultMainRepository : MainRepository {
         }
     }
 
+    override suspend fun getPostForProfile(uid: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val profilePosts = posts.whereEqualTo("authorUid", uid)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Post::class.java)
+                .onEach {post ->
+                    val user = getUser(post.authorUid).data!!
+                    post.authorProfilePictureUrl = user.profilePictureUrl
+                    post.authorUserName = user.username
+                    post.isLiked = uid in post.likedBy
+                }
+            Resource.Success(profilePosts)
+        }
+    }
+
     override suspend fun getPostsForFollows() = withContext(Dispatchers.IO) {
         safeCall {
             val uid = FirebaseAuth.getInstance().uid!!
