@@ -68,6 +68,7 @@ abstract class BasePostFragment(
                 val uid = FirebaseAuth.getInstance().uid!!
                 postAdapter.posts[index].apply {
                     this.isLiked = isLiked
+                    isLiking = false
                     if(isLiked) {
                         likedBy += uid
                     } else {

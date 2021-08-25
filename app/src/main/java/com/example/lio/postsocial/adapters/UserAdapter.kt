@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.example.lio.postsocial.R
-import com.example.lio.postsocial.data.entities.Post
 import com.example.lio.postsocial.data.entities.User
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.item_user.view.*
 import javax.inject.Inject
 
