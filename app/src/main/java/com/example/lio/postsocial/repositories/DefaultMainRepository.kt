@@ -105,6 +105,23 @@ class DefaultMainRepository : MainRepository {
         }
     }
 
+    override suspend fun getCommentsForPosts(postId: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val commentsForPost = comments
+                .whereEqualTo("postId", postId)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Comment::class.java)
+                .onEach { comment ->
+                    val user = getUser(comment.uid).data!!
+                    comment.username = user.username
+                    comment.profilePictureUrl = user.profilePictureUrl
+                }
+            Resource.Success(commentsForPost)
+        }
+    }
+
     override suspend fun getPostForProfile(uid: String) = withContext(Dispatchers.IO) {
         safeCall {
             val profilePosts = posts.whereEqualTo("authorUid", uid)
