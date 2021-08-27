@@ -7,8 +7,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.RequestManager
 import com.example.lio.postsocial.adapters.PostAdapter
+import com.example.lio.postsocial.adapters.UserAdapter
 import com.example.lio.postsocial.other.EventObserver
 import com.example.lio.postsocial.ui.main.dialogs.DeletePostDialog
+import com.example.lio.postsocial.ui.main.dialogs.LikedByDialog
 import com.example.lio.postsocial.ui.main.viewmodels.BasePostViewModel
 import com.example.lio.postsocial.ui.snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -46,6 +48,11 @@ abstract class BasePostFragment(
                 }
             }.show(childFragmentManager, null)
         }
+
+        postAdapter.setOnLikedByPostClickListener { post ->
+            basePostViewModel.getUsers(post.likedBy)
+
+        }
     }
 
     private fun subscribeToObservers() {
@@ -69,7 +76,7 @@ abstract class BasePostFragment(
                 postAdapter.posts[index].apply {
                     this.isLiked = isLiked
                     isLiking = false
-                    if(isLiked) {
+                    if (isLiked) {
                         likedBy += uid
                     } else {
                         likedBy -= uid
@@ -78,10 +85,19 @@ abstract class BasePostFragment(
                 postAdapter.notifyItemChanged(index)
             }
         })
+        basePostViewModel.likedByUsers.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                snackbar(it)
+            }
+        ) { users ->
+            val userAdapter = UserAdapter(glide)
+            userAdapter.users = users
 
+            LikedByDialog(userAdapter).show(childFragmentManager, null)
+        })
         basePostViewModel.deletePostSatatus.observe(viewLifecycleOwner, EventObserver(
             onError = { snackbar(it) }
-        ) {deletedPost ->
+        ) { deletedPost ->
             postAdapter.posts -= deletedPost
         })
 
