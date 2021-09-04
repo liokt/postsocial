@@ -28,6 +28,8 @@
         app:destination="@+id/othersProfileFragment"/>
     <action android:id="@+id/globalActionToCreatePostFragment"
         app:destination="@+id/createPostFragment"/>
+    <action android:id="@+id/globalActionToCommentDialog"
+        app:destination="@+id/commentsDialog"/>
     <fragment
         android:id="@+id/othersProfileFragment"
         android:name="com.example.lio.postsocial.ui.main.fragments.OthersProfileFragment"
@@ -36,4 +38,12 @@
             android:name="uid"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/commentsDialog"
+        android:name="com.example.lio.postsocial.ui.main.dialogs.CommentsDialog"
+        android:label="CommentsDialog" >
+        <argument
+            android:name="postId"
+            app:argType="string" />
+    </dialog>
 </navigation>
